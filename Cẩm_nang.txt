@@ -1,0 +1,59 @@
+--install composer--
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+php -r "if (hash_file('SHA384', 'composer-setup.php') === '544e09ee996cdf60ece3804abc52599c22b1f40f4323403c44d44fdfdd586475ca9813a858088ffbc1f233e9b180f061') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+php composer-setup.php
+php -r "unlink('composer-setup.php');"
+
+--yii--
+create project :
++ basic: 
++advance: composer create-project --prefer-dist yiisoft/yii2-app-advanced <project name>
+
+install AdminLTE template : php composer.phar require dmstr/yii2-adminlte-asset "2.*"
+install datepicker in yii 2:
+- jui/Datepicker 
+php composer.phar require --prefer-dist yiisoft/yii2-jui "*"
+-2amigos
+php composer.phar require "2amigos/yii2-date-picker-widget" "*"
+
+[XDebug]
+zend_extension = "D:\Ebook\xampp\php\ext\php_xdebug-2.5.5-7.1-vc14.dll"
+xdebug.remote_autostart = 1
+xdebug.profiler_append = 0
+xdebug.profiler_enable = 0
+xdebug.profiler_enable_trigger = 0
+xdebug.profiler_output_dir = "D:\Ebook\xampp\tmp"
+;xdebug.profiler_output_name = "cachegrind.out.%t-%s"
+xdebug.remote_enable = 1
+xdebug.remote_handler = "dbgp"
+xdebug.remote_host = "127.0.0.1"
+xdebug.remote_log = "D:\Ebook\xampp\xdebug.txt"
+xdebug.remote_port = 9000
+xdebug.trace_output_dir = "D:\Ebook\xampp\tmp"
+;36000 = 10h
+xdebug.remote_cookie_expire_time = 36000
+
+------------github-----------
+git status (xem nhung gi vua thay doi)
+git add *  (them tat ca thay doi len git)
+git commit -m "ghi chu Commit"  (ghi chu nhung thay doi)
+git push (cap nhat tren git)
+
+git credential-manager uninstall (logout git cmd)
+
+git credential-manager install  
+
+git config --global credential.helper wincred (luu thong tin dang nhap)
+
+git push origin --delete branch_to_be_deleted (xoa thang branch tren remote repository)
+
+
+------- mysql-------
+ show processlist
+SET GLOBAL event_scheduler = ON;
+
+-- dung tieng viet cho database:
+CREATE DATABASE IF NOT EXISTS database_name  CHARACTER SET 'utf8' COLLATE 'utf8_unicode_ci'
+ALTER DATABASE <database_name> CHARACTER SET utf8 COLLATE utf8_unicode_ci;
+
+ALTER TABLE <table_name> CONVERT TO CHARACTER SET utf8 COLLATE utf8_unicode_ci;
