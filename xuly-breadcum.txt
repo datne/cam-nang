@@ -1,0 +1,103 @@
+$cateCode = 'anh-sub4';
+        $subCateCode = 'anh';
+        echo $cateCode.'/'.$subCateCode;
+        $arrCate = [
+            100 => [
+                'cate_id' => 100,
+                'cateName' => 'Home',
+                'cateCode' => 'home',
+                'parentId' => 0,
+                'fullParent' => '0',
+            ],
+            1 => [
+                'cate_id' => 1,
+                'cateName' => 'Ảnh',
+                'cateCode' => 'anh',
+                'parentId' => 100,
+                'fullParent' => '100',
+            ],
+            2 => [
+                'cate_id' => 2,
+                'cateName' => 'Sub2',
+                'cateCode' => 'anh-sub2',
+                'parentId' => 1,
+                'fullParent' => '1,100',
+            ],
+            3 => [
+                'cate_id' => 3,
+                'cateName' => 'Sub3',
+                'cateCode' => 'anh-sub3',
+                'parentId' => 1,
+                'fullParent' => '1,100',
+            ],
+            4 => [
+                'cate_id' => 4,
+                'cateName' => 'Sub4',
+                'cateCode' => 'anh-sub4',
+                'parentId' => 1,
+                'fullParent' => '1,100',
+            ],
+        ];
+        $data = $this->testCustomParams($arrCate,$cateCode,$subCateCode);
+        var_dump($data['bcCustom']);die;
+
+--------------
+private function testCustomParams($arrCate,$cateCode,$subCateCode)
+    {
+        $returnData = [];
+        $cateDetail = [];   
+        $bcCustom = [
+            'parent' => [],
+            'child' => []
+        ];
+        // unset($arrCate[100]);
+        // trường hợp nếu subcatecode == ''
+        // có 2 trường hợp xảy ra (1 => catecode là folder cha, 2 => catecode là con của 1 folder nào đó)
+        if (empty($subCateCode)) {
+            foreach ($arrCate as $obj) {
+                // lấy cateDetail theo catecode
+                if ($obj['cateCode'] == $cateCode) {
+                    $cateDetail = $obj;break;
+                }
+            }
+            if (count($cateDetail) == 0) {
+                throw new BadRequestHttpException('InvalidParamException');
+            }
+
+            foreach ($arrCate as $obj) {           
+                if ($cateDetail['cate_id'] == $obj['parentId']) {
+                    $bcCustom['parent'] = $arrCate[$obj['parentId']];
+                    break;
+                }else{
+                    $arrParent = explode(',', $cateDetail['fullParent']);
+                    if (in_array($obj['cate_id'],$arrParent)) {
+                        $bcCustom['parent'] = $obj;
+                        break;
+                    }
+                }
+            }
+        }
+        //trường hợp nếu subcatecode != ''
+        else{
+            foreach ($arrCate as $obj) {
+                //lấy cateDetail theo subcatecode
+                if ($obj['cateCode'] == $subCateCode) {
+                    $cateDetail = $obj;break;
+                }
+            }
+            if (count($cateDetail) == 0) {
+                throw new BadRequestHttpException('InvalidParamException');
+            }
+            $bcCustom['parent'] = is_null($arrCate[$cateDetail['parentId']]) ? [] : $arrCate[$cateDetail['parentId']];
+        }
+
+        foreach ($arrCate as $obj) {
+            $arrParent = explode(',', $obj['fullParent']);
+            if (in_array($cateDetail['parentId'],$arrParent)) {
+                array_push($bcCustom['child'],$obj); 
+            }
+        }  
+        $returnData['bcCustom'] = $bcCustom;
+        $returnData['cateDetail'] = $cateDetail;
+        return $returnData;
+    }
