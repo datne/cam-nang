@@ -1,6 +1,6 @@
-$cateCode = 'anh-sub4';
-        $subCateCode = 'anh';
-        echo $cateCode.'/'.$subCateCode;
+$cateCode = 'home';
+        $subCateCode = 'anh-sub3';
+       // echo $cateCode.'/'.$subCateCode;
         $arrCate = [
             100 => [
                 'cate_id' => 100,
@@ -39,7 +39,7 @@ $cateCode = 'anh-sub4';
             ],
         ];
         $data = $this->testCustomParams($arrCate,$cateCode,$subCateCode);
-        var_dump($data['bcCustom']);die;
+        //var_dump($data['bcCustom']);die;
 
 --------------
 private function testCustomParams($arrCate,$cateCode,$subCateCode)
@@ -50,7 +50,7 @@ private function testCustomParams($arrCate,$cateCode,$subCateCode)
             'parent' => [],
             'child' => []
         ];
-        // unset($arrCate[100]);
+         unset($arrCate[100]);
         // trường hợp nếu subcatecode == ''
         // có 2 trường hợp xảy ra (1 => catecode là folder cha, 2 => catecode là con của 1 folder nào đó)
         if (empty($subCateCode)) {
@@ -64,11 +64,14 @@ private function testCustomParams($arrCate,$cateCode,$subCateCode)
                 throw new BadRequestHttpException('InvalidParamException');
             }
 
-            foreach ($arrCate as $obj) {           
+            foreach ($arrCate as $obj) {
+                //nếu là thư mục cha           
                 if ($cateDetail['cate_id'] == $obj['parentId']) {
                     $bcCustom['parent'] = $arrCate[$obj['parentId']];
                     break;
-                }else{
+                }
+                //nếu là thư mục con
+                else{
                     $arrParent = explode(',', $cateDetail['fullParent']);
                     if (in_array($obj['cate_id'],$arrParent)) {
                         $bcCustom['parent'] = $obj;
@@ -94,10 +97,12 @@ private function testCustomParams($arrCate,$cateCode,$subCateCode)
         foreach ($arrCate as $obj) {
             $arrParent = explode(',', $obj['fullParent']);
             if (in_array($cateDetail['parentId'],$arrParent)) {
-                array_push($bcCustom['child'],$obj); 
+                $bcCustom['child'][$obj['cate_id']] = $obj;
             }
         }  
         $returnData['bcCustom'] = $bcCustom;
         $returnData['cateDetail'] = $cateDetail;
+        $parent = $returnData['bcCustom']['parent'];
+        unset($returnData['bcCustom']['child'][$parent['cate_id']]);
         return $returnData;
     }
