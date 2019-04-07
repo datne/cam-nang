@@ -1,56 +1,66 @@
-$cateCode = 'home';
-        $subCateCode = 'anh-sub3';
-       // echo $cateCode.'/'.$subCateCode;
+$cateCode = 'anh';
+        $subCateCode = 'anh-sub2';
+       //echo $cateCode.'/'.$subCateCode;
         $arrCate = [
-            100 => [
-                'cate_id' => 100,
+            99 => [
+                'cate_id' => 99,
                 'cateName' => 'Home',
                 'cateCode' => 'home',
                 'parentId' => 0,
                 'fullParent' => '0',
+            ],
+            100 => [
+                'cate_id' => 100,
+                'cateName' => '30 năm tiên phong',
+                'cateCode' => '30-nam-tien-phong',
+                'parentId' => 0,
+                'fullParent' => '99',
             ],
             1 => [
                 'cate_id' => 1,
                 'cateName' => 'Ảnh',
                 'cateCode' => 'anh',
                 'parentId' => 100,
-                'fullParent' => '100',
+                'fullParent' => '100,99',
             ],
             2 => [
                 'cate_id' => 2,
                 'cateName' => 'Sub2',
                 'cateCode' => 'anh-sub2',
                 'parentId' => 1,
-                'fullParent' => '1,100',
+                'fullParent' => '1,100,99',
             ],
             3 => [
                 'cate_id' => 3,
                 'cateName' => 'Sub3',
                 'cateCode' => 'anh-sub3',
                 'parentId' => 1,
-                'fullParent' => '1,100',
+                'fullParent' => '1,100,99',
             ],
             4 => [
                 'cate_id' => 4,
                 'cateName' => 'Sub4',
                 'cateCode' => 'anh-sub4',
                 'parentId' => 1,
-                'fullParent' => '1,100',
+                'fullParent' => '1,100,99',
             ],
         ];
         $data = $this->testCustomParams($arrCate,$cateCode,$subCateCode);
-        //var_dump($data['bcCustom']);die;
+        var_dump($data);die;
 
 --------------
 private function testCustomParams($arrCate,$cateCode,$subCateCode)
     {
+        if (strcasecmp($cateCode,$subCateCode) == 0) {
+            $subCateCode = '';
+        }
         $returnData = [];
         $cateDetail = [];   
         $bcCustom = [
             'parent' => [],
             'child' => []
         ];
-         unset($arrCate[100]);
+        unset($arrCate[99]);
         // trường hợp nếu subcatecode == ''
         // có 2 trường hợp xảy ra (1 => catecode là folder cha, 2 => catecode là con của 1 folder nào đó)
         if (empty($subCateCode)) {
@@ -96,7 +106,7 @@ private function testCustomParams($arrCate,$cateCode,$subCateCode)
 
         foreach ($arrCate as $obj) {
             $arrParent = explode(',', $obj['fullParent']);
-            if (in_array($cateDetail['parentId'],$arrParent)) {
+            if (in_array($cateDetail['parentId'],$arrParent) || in_array($cateDetail['cate_id'],$arrParent)) {
                 $bcCustom['child'][$obj['cate_id']] = $obj;
             }
         }  
